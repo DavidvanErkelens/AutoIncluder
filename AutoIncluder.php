@@ -30,11 +30,18 @@ class AutoIncluder
      *  Constructor
      *  @param  string      the directory to auto-include
      *  @param  array       directories to exclude from search
+     *  @param  boolean     add default excludes?
      */
-    public function __construct(string $directory, array $exclude = array())
+    public function __construct(string $directory, array $exclude = array(), $defaults = true)
     {
         // Store directory
-        $this->directory = $directory;
+        $this->directory = realpath($directory);
+
+        // Normalize excludes
+        foreach ($exclude as &$value) $value = realpath($value);
+
+        // Add default excludes
+        if ($defaults) foreach (array('.git', 'vendor', 'templates_c') as $default) $exclude[] = $this->directory . "/{$default}";
 
         // Store directories to skip
         $this->exclude = $exclude;
@@ -47,7 +54,7 @@ class AutoIncluder
      *  Function that is called when an unknown class is required
      *  @param  string
      */
-    private function autoloadClass(string $className): void
+    private function autoloadClass(string $classname): void
     {
         // Store known classes
         $classes = array();
@@ -59,10 +66,10 @@ class AutoIncluder
             $classes = unserialize(file_get_contents($this->directory.'/autoloader_class_cache'));
 
             // Have we seen this class before?
-            if(array_key_exists($className, $classes))
+            if(array_key_exists($classname, $classes))
             {
                 // Get file required
-                $file = $classes[$className];
+                $file = $classes[$classname];
 
                 // Does the file still exist?
                 if (file_exists($file)) 
@@ -72,18 +79,18 @@ class AutoIncluder
                 }
 
                 // File does not exist anymore, remove from array
-                unset($classes[$className]);
+                unset($classes[$classname]);
             }
         }
 
         // Check if we can find the file in the folder
-        $result = $this->classExistsInFolder($className, new DirectoryIterator($this->directory));
+        $result = $this->classExistsInFolder($classname, new DirectoryIterator($this->directory));
 
         // If found, store the result
         if ($result) 
         {
             // Add to classes array
-            $classes[$className] = $result;
+            $classes[$classname] = $result;
 
             // Cache known classes
             file_put_contents($this->directory.'/autoloader_class_cache', serialize($classes));
@@ -96,7 +103,7 @@ class AutoIncluder
      *  @param  DirectoryIterator
      *  @return string (pathname on success) | false
      */
-    private function classExistsInFolder(string $className, DirectoryIterator $iterator): ?string
+    private function classExistsInFolder(string $classname, DirectoryIterator $iterator): ?string
     {
         // Get the filename of the class
         $filename = substr($classname, strrpos($classname, '\\') + 1);
@@ -114,7 +121,7 @@ class AutoIncluder
                 if (in_array($entry->getPathname(), $this->exclude)) continue;
 
                 // Check if the file existing in the subdirectory
-                if ($pathName = $this->classExistsInFolder($className, new DirectoryIterator($entry->getPathname()))) return $pathName;
+                if ($pathName = $this->classExistsInFolder($classname, new DirectoryIterator($entry->getPathname()))) return $pathName;
             }
 
             // Is the entry a file?
