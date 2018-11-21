@@ -17,3 +17,28 @@ Add the directory where this respository resides to ```include_path``` in ```php
     }
 }
 ```
+## Example code
+Example directory:
+```
+www/
+├── classes/
+|   ├── Website.php   (contains class Website)
+|   └── URL.php       (contains class Url)
+└── index.php
+```
+
+Where ```index.php``` looks as follows:
+```php
+<?php
+
+// Include Composer requirements
+require 'vendor/autoload.php';
+
+// Create autoincluder
+$autoinclude = new AutoIncluder(__DIR__);
+
+// Create website object
+$website = new Website(new URL($_SERVER['REQUEST_URI']));
+```
+
+There is no need to include the files containing the `Website` and `URL` classes, this is done by the AutoIncluder. The AutoIncluder is also able to handle namespaced classes, as long as the filename of the file containing the class matches the class (without namespaces, but different namespaces can contain the same class name - the AutoIncluder will handle this).
