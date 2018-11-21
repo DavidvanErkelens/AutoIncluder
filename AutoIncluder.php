@@ -105,8 +105,11 @@ class AutoIncluder
      */
     private function classExistsInFolder(string $classname, DirectoryIterator $iterator): ?string
     {
+        // Get location of the  last \
+        $slashloc = strrpos($classname, '\\');
+
         // Get the filename of the class
-        $filename = substr($classname, strrpos($classname, '\\') + 1);
+        $filename = ($slashloc > 0 ? substr($classname, $slashloc) : $classname);
 
         // Loop over entries
         foreach ($iterator as $entry)
