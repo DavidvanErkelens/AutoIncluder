@@ -55,4 +55,14 @@ require 'vendor/autoload.php';
 $autoinclude = new AutoIncluder(__DIR__, array(__DIR__ . '/tests'));
 ```
 
-By default, the direct subdirectories `.git`, `vendor` and `templates_c` of the root directory will be excluded from the AutoIncluder. This behaviour can be disable by providing `false` as third parameter of the constructor.
+By default, the direct subdirectories `.git`, `vendor` and `templates_c` of the root directory will be excluded from the AutoIncluder. This behaviour can be disabled by providing `false` as third parameter of the constructor:
+
+```php
+<?php
+
+// Include Composer requirements
+require 'vendor/autoload.php';
+
+// Create autoincluder
+$autoinclude = new AutoIncluder(__DIR__, array(__DIR__ . '/.git'), false);
+```
