@@ -13,7 +13,7 @@ Add the directory where this respository resides to ```include_path``` in ```php
         }
     ],
      "require": {
-        "DavidvanErkelens/AutoIncluder": "> 1.0"
+        "DavidvanErkelens/AutoIncluder": ">= 1.0"
     }
 }
 ```
