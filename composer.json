@@ -1,0 +1,7 @@
+{
+    "name": "DavidvanErkelens/AutoIncluder",
+    "description": "A simple autoloader to include class files in a certain folder",
+    "require": {
+        "php": "^7.1"
+    }
+}

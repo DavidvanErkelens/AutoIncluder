@@ -37,7 +37,7 @@ class AutoIncluder
      *  Function that is called when an unknown class is required
      *  @param  string
      */
-    private function autoloadClass($className)
+    private function autoloadClass(string $className): void
     {
         // Store known classes
         $classes = array();
@@ -86,8 +86,11 @@ class AutoIncluder
      *  @param  DirectoryIterator
      *  @return string (pathname on success) | false
      */
-    private function classExistsInFolder($className, DirectoryIterator $iterator)
+    private function classExistsInFolder(string $className, DirectoryIterator $iterator): ?string
     {
+        // Get the filename of the class
+        $filename = substr($classname, strrpos($classname, '\\') + 1);
+
         // Loop over entries
         foreach ($iterator as $entry)
         {
@@ -105,16 +108,18 @@ class AutoIncluder
             if ($entry->isFile())
             {
                 // Check if the filename is '<classname>.php'
-                if ($entry->getFileName() == $className . '.php')
+                if ($entry->getFileName() == $filename . '.php')
                 {
                     // Include the file, return the path
                     include($pathName = $entry->getPathname());
-                    return $pathName;
+                    
+                    // If we actually have the class now, we're done
+                    if (class_exists($classname)) return $pathName;
                 }
             }
         }
 
         // We did not find the required file.
-        return false;
+        return null;
     }
 }
