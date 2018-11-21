@@ -19,15 +19,25 @@ class AutoIncluder
      */
     private $directory;
 
+    /**
+     *  Directories to exclude
+     *  @var  array
+     */
+    private $exclude;
+
 
     /**
      *  Constructor
      *  @param  string      the directory to auto-include
+     *  @param  array       directories to exclude from search
      */
-    public function __construct($directory)
+    public function __construct(string $directory, array $exclude = array())
     {
         // Store directory
         $this->directory = $directory;
+
+        // Store directories to skip
+        $this->exclude = $exclude;
 
         // Register autoload function
         spl_autoload_register('AutoIncluder::autoloadClass');
@@ -100,6 +110,9 @@ class AutoIncluder
             // If it's a directory, enter the directory
             if ($entry->isDir())
             {
+                // Make sure we don't skip this directory
+                if (in_array($entry->getPathname(), $this->exclude)) continue;
+
                 // Check if the file existing in the subdirectory
                 if ($pathName = $this->classExistsInFolder($className, new DirectoryIterator($entry->getPathname()))) return $pathName;
             }
