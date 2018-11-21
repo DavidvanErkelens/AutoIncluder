@@ -42,3 +42,17 @@ $website = new Website(new URL($_SERVER['REQUEST_URI']));
 ```
 
 There is no need to include the files containing the `Website` and `URL` classes, this is done by the AutoIncluder. The AutoIncluder is also able to handle namespaced classes, as long as the filename of the file containing the class matches the class (without namespaces, but different namespaces can contain the same class name - the AutoIncluder will handle this).
+
+## Excluding directories
+If you want to exclude certain folders from being autoincluded, this can be done by passing these directories in an array as second parameter of the constructor:
+```php
+<?php
+
+// Include Composer requirements
+require 'vendor/autoload.php';
+
+// Create autoincluder
+$autoinclude = new AutoIncluder(__DIR__, array(__DIR__ . '/tests'));
+```
+
+By default, the direct subdirectories `.git`, `vendor` and `templates_c` of the root directory will be excluded from the AutoIncluder. This behaviour can be disable by providing `false` as third parameter of the constructor.
