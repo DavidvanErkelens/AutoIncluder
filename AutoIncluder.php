@@ -66,7 +66,7 @@ class AutoIncluder
             $classes = unserialize(file_get_contents($this->directory.'/autoloader_class_cache'));
 
             // Have we seen this class before?
-            if(array_key_exists($classname, $classes))
+            if (array_key_exists($classname, $classes))
             {
                 // Get file required
                 $file = $classes[$classname];
