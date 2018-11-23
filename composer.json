@@ -5,6 +5,8 @@
         "php": "^7.1"
     },
     "autoload": {
-        "files": ["AutoIncluder.php"]
+        "psr-4": {
+            "\\": "/"
+        }
     }
 }
